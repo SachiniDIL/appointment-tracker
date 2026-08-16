@@ -1,25 +1,25 @@
 package com.sachini.appointment_tracker.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.sachini.appointment_tracker.entity.Appointment;
 import com.sachini.appointment_tracker.entity.AppointmentStatus;
 import com.sachini.appointment_tracker.exception.AppointmentNotFoundException;
 import com.sachini.appointment_tracker.repository.AppointmentRepository;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class AppointmentServiceImplTest {
+
     @Mock
     private AppointmentRepository repository;
 
@@ -27,13 +27,12 @@ class AppointmentServiceImplTest {
     private AppointmentServiceImpl service;
 
     @Test
-    void findAll_returnAllAppointmentsFromRepository() {
+    void findAll_returnsAllAppointmentsFromRepository() {
         Appointment appointment = Appointment.builder()
                 .patientName("John Silva")
                 .doctorName("Dr. Perera")
                 .status(AppointmentStatus.SCHEDULED)
                 .build();
-
         when(repository.findAll()).thenReturn(List.of(appointment));
 
         List<Appointment> result = service.findAll();
@@ -43,10 +42,7 @@ class AppointmentServiceImplTest {
 
     @Test
     void findById_returnsAppointment_whenFound() {
-        Appointment appointment = Appointment.builder()
-                .patientName("John Silva")
-                .build();
-
+        Appointment appointment = Appointment.builder().patientName("John Silva").build();
         when(repository.findById(1L)).thenReturn(Optional.of(appointment));
 
         Optional<Appointment> result = service.findById(1L);
@@ -101,8 +97,19 @@ class AppointmentServiceImplTest {
     }
 
     @Test
-    void delete_callsRepositoryDeleteById() {
+    void delete_callsRepositoryDeleteById_whenExists() {
+        when(repository.existsById(1L)).thenReturn(true);
+
         service.delete(1L);
+
         verify(repository).deleteById(1L);
+    }
+
+    @Test
+    void delete_throws_whenAppointmentNotFound() {
+        when(repository.existsById(99L)).thenReturn(false);
+
+        assertThatThrownBy(() -> service.delete(99L))
+                .isInstanceOf(AppointmentNotFoundException.class);
     }
 }
