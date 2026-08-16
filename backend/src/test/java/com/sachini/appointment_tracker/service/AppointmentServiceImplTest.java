@@ -2,6 +2,7 @@ package com.sachini.appointment_tracker.service;
 
 import com.sachini.appointment_tracker.entity.Appointment;
 import com.sachini.appointment_tracker.entity.AppointmentStatus;
+import com.sachini.appointment_tracker.exception.AppointmentNotFoundException;
 import com.sachini.appointment_tracker.repository.AppointmentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,7 +78,7 @@ class AppointmentServiceImplTest {
     }
 
     @Test
-    void updateStatus_updatesAndSaves_whenAppointmentExists(){
+    void updateStatus_updatesAndSaves_whenAppointmentExists() {
         Appointment appointment = Appointment.builder()
                 .patientName("Kamal Perera")
                 .status(AppointmentStatus.SCHEDULED)
@@ -93,11 +93,11 @@ class AppointmentServiceImplTest {
     }
 
     @Test
-    void updateStatus_throws_whenAppointmentNotFound(){
+    void updateStatus_throws_whenAppointmentNotFound() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.updateStatus(99L, AppointmentStatus.COMPLETED))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(AppointmentNotFoundException.class);
     }
 
     @Test

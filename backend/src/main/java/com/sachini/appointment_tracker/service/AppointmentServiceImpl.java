@@ -2,6 +2,7 @@ package com.sachini.appointment_tracker.service;
 
 import com.sachini.appointment_tracker.entity.Appointment;
 import com.sachini.appointment_tracker.entity.AppointmentStatus;
+import com.sachini.appointment_tracker.exception.AppointmentNotFoundException;
 import com.sachini.appointment_tracker.repository.AppointmentRepository;
 import org.springframework.stereotype.Repository;
 
@@ -34,7 +35,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Appointment update(Long id, Appointment appointment) {
-        Appointment existingAppointment = repository.findById(id).orElseThrow(NoSuchElementException::new);
+        Appointment existingAppointment = repository.findById(id)
+                .orElseThrow(() -> new AppointmentNotFoundException(id));
         existingAppointment.setCreatedAt(appointment.getCreatedAt());
         existingAppointment.setDoctorName(appointment.getDoctorName());
         existingAppointment.setPatientName(appointment.getPatientName());
@@ -45,7 +47,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Appointment updateStatus(Long id, AppointmentStatus status) {
         Appointment appointment = repository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("Appointment with id " + id + " not found")
+                () -> new AppointmentNotFoundException(id)
         );
         appointment.setStatus(status);
         return repository.save(appointment);
