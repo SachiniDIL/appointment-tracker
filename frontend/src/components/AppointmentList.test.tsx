@@ -43,7 +43,9 @@ describe("AppointmentList", () => {
 
     render(<AppointmentList refreshKey={0} />);
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Something went wrong");
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Something went wrong",
+    );
   });
 
   it("calls the delete endpoint and removes the row on click", async () => {
@@ -57,7 +59,9 @@ describe("AppointmentList", () => {
 
     await user.click(screen.getByRole("button", { name: "Delete" }));
 
-    await waitFor(() => expect(screen.queryByText("Jane Doe")).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.queryByText("Jane Doe")).not.toBeInTheDocument(),
+    );
     expect(fetch).toHaveBeenLastCalledWith(
       "http://localhost:8080/api/appointments/1",
       expect.objectContaining({ method: "DELETE" }),
@@ -69,7 +73,10 @@ describe("AppointmentList", () => {
     const updatedAppointment = { ...appointment, status: "COMPLETED" as const };
     (fetch as ReturnType<typeof vi.fn>)
       .mockResolvedValueOnce({ ok: true, json: async () => [appointment] })
-      .mockResolvedValueOnce({ ok: true, json: async () => updatedAppointment });
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => updatedAppointment,
+      });
 
     render(<AppointmentList refreshKey={0} />);
     await screen.findByText("Jane Doe");
@@ -80,9 +87,14 @@ describe("AppointmentList", () => {
     await waitFor(() =>
       expect(fetch).toHaveBeenLastCalledWith(
         "http://localhost:8080/api/appointments/1/status",
-        expect.objectContaining({ method: "PATCH", body: JSON.stringify("COMPLETED") }),
+        expect.objectContaining({
+          method: "PATCH",
+          body: JSON.stringify("COMPLETED"),
+        }),
       ),
     );
-    expect(within(select).getByRole("option", { name: "COMPLETED" }).selected).toBe(true);
+    expect(
+      within(select).getByRole("option", { name: "COMPLETED" }).selected,
+    ).toBe(true);
   });
 });

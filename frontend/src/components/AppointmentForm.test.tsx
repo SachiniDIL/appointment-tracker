@@ -64,7 +64,10 @@ describe("AppointmentForm", () => {
 
     await user.type(screen.getByLabelText("Patient name"), "Jane Doe");
     await user.type(screen.getByLabelText("Doctor name"), "Dr. Smith");
-    await user.type(screen.getByLabelText("Appointment date"), "2020-01-01T10:00");
+    await user.type(
+      screen.getByLabelText("Appointment date"),
+      "2020-01-01T10:00",
+    );
     await user.click(screen.getByRole("button", { name: "Book appointment" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(

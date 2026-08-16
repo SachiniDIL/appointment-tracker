@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import type { Appointment, AppointmentStatus } from "../types/appointment";
-import { deleteAppointment, getAppointments, updateStatus } from "../api/appointments";
+import {
+  deleteAppointment,
+  getAppointments,
+  updateStatus,
+} from "../api/appointments";
 
 const STATUS_OPTIONS: AppointmentStatus[] = [
   "SCHEDULED",
@@ -40,7 +44,9 @@ export function AppointmentList({ refreshKey }: AppointmentListProps) {
     try {
       const updated = await updateStatus(id, status);
       setAppointments((prev) =>
-        prev.map((appointment) => (appointment.id === id ? updated : appointment)),
+        prev.map((appointment) =>
+          appointment.id === id ? updated : appointment,
+        ),
       );
     } catch (err) {
       setError((err as Error).message);
@@ -50,7 +56,9 @@ export function AppointmentList({ refreshKey }: AppointmentListProps) {
   async function handleDelete(id: number) {
     try {
       await deleteAppointment(id);
-      setAppointments((prev) => prev.filter((appointment) => appointment.id !== id));
+      setAppointments((prev) =>
+        prev.filter((appointment) => appointment.id !== id),
+      );
     } catch (err) {
       setError((err as Error).message);
     }
@@ -82,7 +90,10 @@ export function AppointmentList({ refreshKey }: AppointmentListProps) {
                 aria-label={`Status for ${appointment.patientName}`}
                 value={appointment.status}
                 onChange={(e) =>
-                  handleStatusChange(appointment.id, e.target.value as AppointmentStatus)
+                  handleStatusChange(
+                    appointment.id,
+                    e.target.value as AppointmentStatus,
+                  )
                 }
               >
                 {STATUS_OPTIONS.map((status) => (
@@ -93,7 +104,9 @@ export function AppointmentList({ refreshKey }: AppointmentListProps) {
               </select>
             </td>
             <td>
-              <button onClick={() => handleDelete(appointment.id)}>Delete</button>
+              <button onClick={() => handleDelete(appointment.id)}>
+                Delete
+              </button>
             </td>
           </tr>
         ))}
