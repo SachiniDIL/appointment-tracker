@@ -11,6 +11,7 @@ public interface AppointmentService {
     List<Appointment> findAll();
     Optional<Appointment> findById(Long id);
     Appointment create(Appointment appointment);
+    Appointment update(Long id, Appointment appointment);
     Appointment updateStatus(Long id, AppointmentStatus status);
     void delete(Long id);
 }
