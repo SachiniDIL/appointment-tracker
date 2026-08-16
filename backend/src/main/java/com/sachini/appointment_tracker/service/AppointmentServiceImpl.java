@@ -33,6 +33,16 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    public Appointment update(Long id, Appointment appointment) {
+        Appointment existingAppointment = repository.findById(id).orElseThrow(NoSuchElementException::new);
+        existingAppointment.setCreatedAt(appointment.getCreatedAt());
+        existingAppointment.setDoctorName(appointment.getDoctorName());
+        existingAppointment.setPatientName(appointment.getPatientName());
+
+        return repository.save(existingAppointment);
+    }
+
+    @Override
     public Appointment updateStatus(Long id, AppointmentStatus status) {
         Appointment appointment = repository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("Appointment with id " + id + " not found")
